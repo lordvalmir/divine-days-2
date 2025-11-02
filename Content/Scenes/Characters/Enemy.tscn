@@ -4,25 +4,27 @@
 [ext_resource type="Texture2D" uid="uid://ovuhcayl5l0" path="res://Content/Assets/62.png" id="1_1kmqp"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_0ult5"]
-radius = 35.128338
+radius = 15.033297
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_eq55t"]
-radius = 35.014282
+radius = 15.297058
 
 [node name="Enemy" type="CharacterBody2D"]
-collision_layer = 2
+collision_layer = 4
 collision_mask = 5
 script = ExtResource("1_0ult5")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-position = Vector2(1.9073486e-06, -3.8146973e-06)
-scale = Vector2(0.36132813, 0.38085938)
+position = Vector2(-1.9073486e-06, 0)
+scale = Vector2(0.18066405, 0.18652342)
 texture = ExtResource("1_1kmqp")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." groups=["Enemy"]]
 shape = SubResource("CircleShape2D_0ult5")
 
 [node name="Damage Area" type="Area2D" parent="."]
+collision_layer = 4
+collision_mask = 2
 
 [node name="Damage Area Shape" type="CollisionShape2D" parent="Damage Area"]
 shape = SubResource("CircleShape2D_eq55t")

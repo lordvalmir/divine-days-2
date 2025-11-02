@@ -1,7 +1,7 @@
 extends CharacterBody2D
 
-@export var enemy_move_speed: float = 280.0
-
+@export var enemy_move_speed: float = 130
+ 
 @onready var player = get_tree().get_first_node_in_group("Player")
 @warning_ignore("unused_parameter")
 

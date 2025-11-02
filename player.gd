@@ -26,6 +26,7 @@ func take_damage(amount):
 func die():
 	print("Player died!")
 	queue_free()
+	get_tree().reload_current_scene()
 
 func _physics_process(_delta):
 	var horizontal = Input.get_axis("ui_left", "ui_right")
