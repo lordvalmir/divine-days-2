@@ -15,6 +15,13 @@ run/main_scene="uid://duxnb6suaxaap"
 config/features=PackedStringArray("4.5", "Mobile")
 config/icon="res://icon.svg"
 
+[layer_names]
+
+2d_physics/layer_1="Geometry"
+2d_physics/layer_2="Player"
+2d_physics/layer_3="Enemy"
+2d_physics/layer_4="Pickup"
+
 [rendering]
 
 renderer/rendering_method="mobile"

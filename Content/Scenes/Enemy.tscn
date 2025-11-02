@@ -1,10 +1,13 @@
-[gd_scene load_steps=4 format=3 uid="uid://c13efe6mxfeef"]
+[gd_scene load_steps=5 format=3 uid="uid://c13efe6mxfeef"]
 
 [ext_resource type="Script" uid="uid://c4e0vrmvbl4te" path="res://Scripts/Enemy Follow AI.gd" id="1_0ult5"]
 [ext_resource type="Texture2D" uid="uid://ovuhcayl5l0" path="res://Content/Assets/62.png" id="1_1kmqp"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_0ult5"]
 radius = 35.128338
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_eq55t"]
+radius = 35.014282
 
 [node name="Enemy" type="CharacterBody2D"]
 script = ExtResource("1_0ult5")
@@ -14,5 +17,10 @@ position = Vector2(1.9073486e-06, -3.8146973e-06)
 scale = Vector2(0.36132813, 0.38085938)
 texture = ExtResource("1_1kmqp")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." groups=["Enemy"]]
 shape = SubResource("CircleShape2D_0ult5")
+
+[node name="Damage Area" type="Area2D" parent="."]
+
+[node name="Damage Area Shape" type="CollisionShape2D" parent="Damage Area"]
+shape = SubResource("CircleShape2D_eq55t")
