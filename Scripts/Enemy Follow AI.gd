@@ -4,7 +4,11 @@ extends CharacterBody2D
 
 @onready var player = get_tree().get_first_node_in_group("Player")
 @warning_ignore("unused_parameter")
-func _physics_process(delta: float) -> void:
+
+func _ready():
+	add_to_group("enemy")
+
+func _physics_process(_delta: float) -> void:
 		var direction = position.direction_to(player.global_position).normalized()
 		velocity = direction * enemy_move_speed
 		move_and_slide()
