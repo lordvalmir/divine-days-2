@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=4 uid="uid://birdyrfudg6pi"]
+[gd_scene load_steps=21 format=4 uid="uid://birdyrfudg6pi"]
 
 [ext_resource type="PackedScene" uid="uid://cu1emc8j0i1u0" path="res://Content/Scenes/Levels/level.tscn" id="1_prppr"]
 [ext_resource type="Texture2D" uid="uid://b8qfk18qiwl8o" path="res://Content/Assets/Ground_rocks.png" id="2_udwqt"]
@@ -6,7 +6,9 @@
 [ext_resource type="Texture2D" uid="uid://bb46t26ljmbv6" path="res://Content/Assets/Objects.png" id="4_i03ao"]
 [ext_resource type="Texture2D" uid="uid://dklrntyxar1tr" path="res://Content/Assets/Water_coasts.png" id="5_3hi4v"]
 [ext_resource type="Texture2D" uid="uid://b4k5uplw1y5wu" path="res://Content/Assets/Details.png" id="6_yagno"]
+[ext_resource type="PackedScene" uid="uid://cbeweyor1mtuw" path="res://Content/Scenes/Characters/enemy_spawner.tscn" id="7_6k687"]
 [ext_resource type="PackedScene" uid="uid://c13efe6mxfeef" path="res://Content/Scenes/Characters/Enemy.tscn" id="7_500iu"]
+[ext_resource type="Script" uid="uid://djkxt06q8abav" path="res://Scripts/spawn_info.gd" id="8_lqeuj"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_i03ao"]
 texture = ExtResource("2_udwqt")
@@ -6405,6 +6407,14 @@ physics_layer_0/collision_mask = 6
 sources/0 = SubResource("TileSetAtlasSource_500iu")
 sources/1 = SubResource("TileSetAtlasSource_x4oks")
 
+[sub_resource type="Resource" id="Resource_xkko6"]
+script = ExtResource("8_lqeuj")
+time_end = 60
+enemy = ExtResource("7_500iu")
+enemy_num = 4
+enemy_spawn_delay = 1
+metadata/_custom_type_script = "uid://djkxt06q8abav"
+
 [node name="Game" type="Node2D"]
 
 [node name="Level" parent="." instance=ExtResource("1_prppr")]
@@ -6427,14 +6437,5 @@ tile_set = SubResource("TileSet_jneq2")
 tile_map_data = PackedByteArray("AAD6//3/AQAQAA8AAAD6//7/AQAQABAAAAD6////AQAQABEAAAD6/wAAAQAQABIAAAD7//z/AQARAA4AAAD7//3/AQARAA8AAAD7//7/AQARABAAAAD7////AQARABEAAAD7/wAAAQARABIAAAD8//3/AQASAA8AAAD8//7/AQASABAAAAD8////AQASABEAAAD8/wAAAQASABIAAAAFAPn/AQAQAA8AAAAFAPr/AQAQABAAAAAFAPv/AQAQABEAAAAFAPz/AQAQABIAAAAGAPj/AQARAA4AAAAGAPn/AQARAA8AAAAGAPr/AQARABAAAAAGAPv/AQARABEAAAAGAPz/AQARABIAAAAHAPn/AQASAA8AAAAHAPr/AQASABAAAAAHAPv/AQASABEAAAAHAPz/AQASABIAAAAJAP7/AQAQAA8AAAAJAP//AQAQABAAAAAJAAAAAQAQABEAAAAJAAEAAQAQABIAAAAKAP3/AQARAA4AAAAKAP7/AQARAA8AAAAKAP//AQARABAAAAAKAAAAAQARABEAAAAKAAEAAQARABIAAAALAP7/AQASAA8AAAALAP//AQASABAAAAALAAAAAQASABEAAAALAAEAAQASABIAAAD6/wYAAQAQAA8AAAD6/wcAAQAQABAAAAD6/wgAAQAQABEAAAD6/wkAAQAQABIAAAD7/wUAAQARAA4AAAD7/wYAAQARAA8AAAD7/wcAAQARABAAAAD7/wgAAQARABEAAAD7/wkAAQARABIAAAD8/wYAAQASAA8AAAD8/wcAAQASABAAAAD8/wgAAQASABEAAAD8/wkAAQASABIAAAADAAoAAQAQAA8AAAADAAsAAQAQABAAAAADAAwAAQAQABEAAAADAA0AAQAQABIAAAAEAAkAAQARAA4AAAAEAAoAAQARAA8AAAAEAAsAAQARABAAAAAEAAwAAQARABEAAAAEAA0AAQARABIAAAAFAAoAAQASAA8AAAAFAAsAAQASABAAAAAFAAwAAQASABEAAAAFAA0AAQASABIAAAA=")
 tile_set = SubResource("TileSet_500iu")
 
-[node name="Enemy" parent="." instance=ExtResource("7_500iu")]
-position = Vector2(-143, -65)
-
-[node name="Enemy2" parent="." instance=ExtResource("7_500iu")]
-position = Vector2(218, -113)
-
-[node name="Enemy3" parent="." instance=ExtResource("7_500iu")]
-position = Vector2(-200, 109)
-
-[node name="Enemy4" parent="." instance=ExtResource("7_500iu")]
-position = Vector2(109, 110)
+[node name="EnemySpawner" parent="." instance=ExtResource("7_6k687")]
+spawns = Array[ExtResource("8_lqeuj")]([SubResource("Resource_xkko6")])
