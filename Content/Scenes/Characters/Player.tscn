@@ -1,7 +1,8 @@
-[gd_scene load_steps=5 format=3 uid="uid://dksm1sb4bmyc7"]
+[gd_scene load_steps=6 format=3 uid="uid://dksm1sb4bmyc7"]
 
 [ext_resource type="Texture2D" uid="uid://bge6q6ymjnt54" path="res://Content/Assets/2.png" id="1_k7bjn"]
 [ext_resource type="Script" uid="uid://ncinrcv44sy5" path="res://player.gd" id="1_o13n2"]
+[ext_resource type="PackedScene" uid="uid://dfe0a8jv12hq7" path="res://Content/Scenes/projectiles/Fireball.tscn" id="2_wke2c"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_o13n2"]
 radius = 8.0
@@ -15,6 +16,7 @@ height = 34.0
 collision_layer = 2
 motion_mode = 1
 script = ExtResource("1_o13n2")
+fireball_scene = ExtResource("2_wke2c")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 scale = Vector2(0.3515625, 0.3515625)
