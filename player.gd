@@ -8,6 +8,7 @@ var current_health = max_health
 var damage_timer = 0.0
 
 func _ready():
+	#add_to_group("player")
 	current_health = max_health
 	$Area2D.body_entered.connect(_on_body_entered)
 

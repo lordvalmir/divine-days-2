@@ -24,7 +24,7 @@ texture = ExtResource("1_k7bjn")
 position = Vector2(0, 14)
 shape = SubResource("CapsuleShape2D_o13n2")
 
-[node name="Area2D" type="Area2D" parent="."]
+[node name="Area2D" type="Area2D" parent="." groups=["Player"]]
 collision_layer = 2
 collision_mask = 4
 
