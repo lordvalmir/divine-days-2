@@ -13,7 +13,7 @@ var fire_timer = 0.0
 var last_direction = Vector2.RIGHT  # Default direction when not moving
 
 func _ready():
-	#add_to_group("player")
+	add_to_group("Player")
 	current_health = max_health
 	$Area2D.body_entered.connect(_on_body_entered)
 
