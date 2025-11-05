@@ -20,20 +20,16 @@ func _ready():
 func _physics_process(_delta):
 	var horizontal = Input.get_axis("ui_left", "ui_right")
 	var vertical = Input.get_axis("ui_up", "ui_down")
-	
-	# Create movement vector
 	var movement = Vector2(horizontal, vertical)
-	
-	# Update last direction if moving
+
 	if movement.length() > 0:
 		last_direction = movement.normalized()
 		velocity = movement.normalized() * player_move_speed
 	else:
 		velocity = velocity.move_toward(Vector2.ZERO, player_move_speed)
-	
+
 	move_and_slide()
-	
-	# Damage cooldown
+
 	damage_timer -= _delta
 	if damage_timer <= 0:
 		var overlapping = $Area2D.get_overlapping_bodies()
@@ -42,8 +38,7 @@ func _physics_process(_delta):
 				take_damage(10)
 				damage_timer = damage_cooldown
 				break
-	
-	# Fireball timer
+
 	fire_timer -= _delta
 	if fire_timer <= 0:
 		shoot_fireballs()
@@ -55,14 +50,8 @@ func shoot_fireballs():
 	
 	for i in range(fireball_count):
 		var fireball = fireball_scene.instantiate()
-		
-		# Shoot in the direction of movement (or last direction if standing still)
 		fireball.direction = last_direction
-		
-		# Spawn at player position
 		fireball.position = global_position
-		
-		# Add to scene
 		get_parent().add_child(fireball)
 
 func _on_body_entered(body):

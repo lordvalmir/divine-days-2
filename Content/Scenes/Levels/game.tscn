@@ -6412,8 +6412,7 @@ sources/1 = SubResource("TileSetAtlasSource_x4oks")
 [sub_resource type="Resource" id="Resource_xkko6"]
 script = ExtResource("8_lqeuj")
 enemy = ExtResource("9_lqeuj")
-enemy_num = 10
-enemy_spawn_delay = 0
+wave_delay = 3
 metadata/_custom_type_script = "uid://djkxt06q8abav"
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_5cv0s"]
@@ -6422,8 +6421,7 @@ size = Vector2(201, 119)
 [sub_resource type="Resource" id="Resource_reu3b"]
 script = ExtResource("8_lqeuj")
 enemy = ExtResource("11_tdtgx")
-enemy_num = 20
-enemy_spawn_delay = 0
+wave_delay = 3
 metadata/_custom_type_script = "uid://djkxt06q8abav"
 
 [node name="Game" type="Node2D"]

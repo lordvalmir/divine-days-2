@@ -2,7 +2,7 @@ extends Resource
 class_name Spawn_info
 
 @export var enemy: Resource
-@export var enemy_num: int = 1
-@export var enemy_spawn_delay: int = 5
+@export var enemies_per_wave: int = 5
+@export var wave_delay: int = 10
 
-var spawn_delay_counter = 0
+var wave_delay_counter = 0
