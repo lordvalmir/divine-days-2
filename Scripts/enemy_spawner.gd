@@ -7,6 +7,7 @@ extends Node2D
 
 var time = 0
 
+
 func _on_timer_timeout():
 	time += 1
 	var enemy_spawns = spawns
@@ -51,3 +52,8 @@ func get_random_position():
 	var x_spawn = randf_range(spawn_pos1.x, spawn_pos2.x)
 	var y_spawn = randf_range(spawn_pos1.y, spawn_pos2.y)
 	return Vector2(x_spawn, y_spawn)
+
+
+
+func _on_level_area_area_entered(area):
+	spawns = 
