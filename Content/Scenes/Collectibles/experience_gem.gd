@@ -2,9 +2,9 @@ extends Area2D
 
 @export var experience = 1
 
-var spr_green = preload("res://Content/Assets/pngtree-glossy-pixel-gem-with-high-contrast-shine-on-transparent-background-vector-png-image_16207030.png")
-var spr_blue = preload("res://Content/Assets/pngtree-glossy-pixel-gem-with-high-contrast-shine-on-transparent-background-vector-png-image_16207030.png")
-var spr_red = preload("res://Content/Assets/pngtree-glossy-pixel-gem-with-high-contrast-shine-on-transparent-background-vector-png-image_16207030.png")
+var spr_green = preload("res://Content/Assets/Gem_Green.png")
+var spr_blue = preload("res://Content/Assets/Gem_Blue.png")
+var spr_red = preload("res://Content/Assets/Gem_Red.png")
 
 var target = null
 var speed = -1

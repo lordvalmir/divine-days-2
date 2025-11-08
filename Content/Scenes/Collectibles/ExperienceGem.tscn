@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://y2o2nd3vyjy"]
 
 [ext_resource type="Script" uid="uid://8lgiwljpuvou" path="res://Content/Scenes/Collectibles/experience_gem.gd" id="1_bufni"]
-[ext_resource type="Texture2D" uid="uid://bk7easara6by1" path="res://Content/Assets/pngtree-glossy-pixel-gem-with-high-contrast-shine-on-transparent-background-vector-png-image_16207030.png" id="1_oww82"]
+[ext_resource type="Texture2D" uid="uid://bpdqnjikmhf3s" path="res://Content/Assets/Gem_Green.png" id="2_bufni"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_1h5af"]
 radius = 5.0
@@ -12,8 +12,8 @@ collision_mask = 2
 script = ExtResource("1_bufni")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-scale = Vector2(0.02, 0.02)
-texture = ExtResource("1_oww82")
+position = Vector2(-1, -1)
+texture = ExtResource("2_bufni")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_1h5af")

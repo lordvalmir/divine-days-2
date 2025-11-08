@@ -4,6 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://b14q4anc84b3n" path="res://Content/Assets/344.png" id="2_yjaco"]
 
 [node name="Enemy" instance=ExtResource("1_wbtjd")]
+experience = 50
 
 [node name="Sprite2D" parent="." index="0"]
 texture = ExtResource("2_yjaco")
