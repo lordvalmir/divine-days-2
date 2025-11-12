@@ -4,7 +4,7 @@ signal upgrade_selected(upgrade_data: Dictionary)
 
 @onready var upgrades_container = $ColorRect/PanelContainer/VBoxContainer/HBoxContainer
 
-# Preload spell resources (you'll create these in the editor)
+# Available spell resources that can be unlocked
 @export var available_spell_resources: Array[SpellBase] = []
 
 var spell_manager: SpellManager = null
@@ -39,28 +39,31 @@ func show_upgrades(current_spell_manager: SpellManager = null):
 	# Build available upgrades list
 	var possible_upgrades = []
 	
-	# Add player stat upgrades
+	# Add player stat upgrades (always available)
 	possible_upgrades.append_array(player_upgrades)
 	
-	# Add spell upgrades for equipped spells
 	if spell_manager:
+		# Get all equipped spells and add upgrade options
 		for spell in spell_manager.get_all_spells():
-			possible_upgrades.append_array(get_spell_upgrades(spell))
+			# Only offer upgrade if spell is not max level
+			if spell.current_level < 5:
+				possible_upgrades.append(create_spell_level_upgrade(spell))
 		
-		# Add new spell options if player doesn't have them yet
+		# Add new spell unlock options (for spells player doesn't have)
 		for spell_resource in available_spell_resources:
 			if not spell_manager.has_spell(spell_resource.spell_name):
 				possible_upgrades.append({
 					"name": "Unlock: " + spell_resource.spell_name,
-					"description": "Acquire new spell",
+					"description": get_spell_description(spell_resource),
 					"icon": spell_resource.spell_icon,
 					"type": "new_spell",
 					"new_spell": spell_resource
 				})
 	
-	# Select random upgrades
+	# Select 3 random upgrades (or less if not enough available)
 	possible_upgrades.shuffle()
-	var selected_upgrades = possible_upgrades.slice(0, min(3, possible_upgrades.size()))
+	var num_upgrades = min(3, possible_upgrades.size())
+	var selected_upgrades = possible_upgrades.slice(0, num_upgrades)
 	
 	# Create buttons for each upgrade
 	for upgrade in selected_upgrades:
@@ -70,65 +73,92 @@ func show_upgrades(current_spell_manager: SpellManager = null):
 	show()
 	get_tree().paused = true
 
-func get_spell_upgrades(spell: SpellBase) -> Array:
-	var upgrades = []
+func create_spell_level_upgrade(spell: SpellBase) -> Dictionary:
+	var next_level = spell.current_level + 1
+	var description = get_level_upgrade_description(spell, next_level)
 	
-	upgrades.append({
-		"name": spell.spell_name + ": Damage",
-		"description": "+20% Damage",
+	return {
+		"name": spell.spell_name + " Level " + str(next_level),
+		"description": description,
 		"icon": spell.spell_icon,
-		"type": "spell_upgrade",
+		"type": "spell_level_up",
 		"spell_name": spell.spell_name,
-		"upgrade_type": "damage"
-	})
-	
-	upgrades.append({
-		"name": spell.spell_name + ": Fire Rate",
-		"description": "+15% Attack Speed",
-		"icon": spell.spell_icon,
-		"type": "spell_upgrade",
-		"spell_name": spell.spell_name,
-		"upgrade_type": "fire_rate"
-	})
-	
-	upgrades.append({
-		"name": spell.spell_name + ": Count",
-		"description": "+1 Projectile",
-		"icon": spell.spell_icon,
-		"type": "spell_upgrade",
-		"spell_name": spell.spell_name,
-		"upgrade_type": "count"
-	})
-	
-	# Only offer pierce if spell doesn't have too much already
-	if spell.get_pierce() < 5:
-		upgrades.append({
-			"name": spell.spell_name + ": Pierce",
-			"description": "+1 Pierce",
-			"icon": spell.spell_icon,
-			"type": "spell_upgrade",
-			"spell_name": spell.spell_name,
-			"upgrade_type": "pierce"
-		})
-	
-	return upgrades
+		"target_level": next_level
+	}
 
-func create_upgrade_button(upgrade: Dictionary) -> Button:
+func get_level_upgrade_description(spell: SpellBase, next_level: int) -> String:
+	# Define what each level does for each spell
+	match next_level:
+		2:
+			return "+20% Damage"
+		3:
+			return "+1 Projectile"
+		4:
+			return "+20% Fire Rate"
+		5:
+			return "+1 Pierce & +20% Damage"
+	return "Upgrade"
+
+func get_spell_description(spell: SpellBase) -> String:
+	# Create a description based on spell properties
+	var desc = ""
+	
+	match spell.spread_pattern:
+		SpellBase.SpreadPattern.RANDOM:
+			desc = "Shoots in random directions"
+		SpellBase.SpreadPattern.AIMED:
+			desc = "Targets nearest enemy"
+		SpellBase.SpreadPattern.CIRCLE:
+			desc = "Ring of projectiles"
+		SpellBase.SpreadPattern.CONE:
+			desc = "Cone in movement direction"
+		SpellBase.SpreadPattern.SPIRAL:
+			desc = "Rotating spiral pattern"
+	
+	desc += " | DMG: " + str(spell.base_damage)
+	
+	return desc
+
+func create_upgrade_button(upgrade: Dictionary) -> Control:
+	# Create a more detailed button with better layout
+	var button_container = PanelContainer.new()
+	button_container.custom_minimum_size = Vector2(220, 120)
+	
+	# Add a button inside the panel
 	var button = Button.new()
-	button.custom_minimum_size = Vector2(200, 100)
+	button_container.add_child(button)
 	
-	# Create button text
-	var button_text = upgrade.name + "\n" + upgrade.description
-	button.text = button_text
+	# Create VBox for layout
+	var vbox = VBoxContainer.new()
+	button.add_child(vbox)
 	
-	# TODO: Add icon support if you want
-	# if upgrade.has("icon") and upgrade.icon:
-	#     var texture_rect = TextureRect.new()
-	#     texture_rect.texture = upgrade.icon
-	#     button.add_child(texture_rect)
+	# Title label
+	var title = Label.new()
+	title.text = upgrade.name
+	title.add_theme_font_size_override("font_size", 16)
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	vbox.add_child(title)
+	
+	# Description label
+	var desc = Label.new()
+	desc.text = upgrade.description
+	desc.add_theme_font_size_override("font_size", 12)
+	desc.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	desc.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	desc.custom_minimum_size.x = 200
+	vbox.add_child(desc)
+	
+	# Add level indicator if it's a spell upgrade
+	if upgrade.get("type") == "spell_level_up":
+		var level_label = Label.new()
+		level_label.text = "⭐".repeat(upgrade.get("target_level", 1))
+		level_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		level_label.add_theme_font_size_override("font_size", 14)
+		vbox.add_child(level_label)
 	
 	button.pressed.connect(_on_upgrade_button_pressed.bind(upgrade))
-	return button
+	
+	return button_container
 
 func _on_upgrade_button_pressed(upgrade: Dictionary):
 	upgrade_selected.emit(upgrade)

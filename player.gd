@@ -14,7 +14,7 @@ var collected_experience = 0
 @onready var expBar = get_node("%ExperienceBar")
 @onready var ExperienceBarText = get_node("%ExperienceBarText")
 @onready var upgrade_menu = get_node("/root/Game/UpgradeMenu")
-@onready var spell_manager: SpellManager = $SpellManager
+@onready var spell_manager: SpellManager = $SpellManager if has_node("SpellManager") else null
 
 func _ready():
 	add_to_group("Player")
@@ -29,8 +29,11 @@ func _ready():
 	# Setup spell manager
 	if spell_manager:
 		spell_manager.owner_node = self
+		# Connect to spell signals for feedback
+		spell_manager.spell_unlocked.connect(_on_spell_unlocked)
+		spell_manager.spell_upgraded.connect(_on_spell_upgraded)
 
-func _physics_process(delta):  # ← Changed _delta to delta
+func _physics_process(delta):
 	var horizontal = Input.get_axis("ui_left", "ui_right")
 	var vertical = Input.get_axis("ui_up", "ui_down")
 	var movement = Vector2(horizontal, vertical)
@@ -39,13 +42,13 @@ func _physics_process(delta):  # ← Changed _delta to delta
 		last_direction = movement.normalized()
 		velocity = movement.normalized() * player_move_speed
 	else:
-		# Use delta * deceleration instead of player_move_speed
-		velocity = velocity.move_toward(Vector2.ZERO, player_move_speed * delta * 10)
+		# Smooth deceleration
+		var friction = 1000.0
+		velocity = velocity.move_toward(Vector2.ZERO, friction * delta)
 	
 	move_and_slide()
 	
-	# Also fix the damage timer section:
-	damage_timer -= delta  # ← Changed _delta to delta
+	damage_timer -= delta
 	if damage_timer <= 0:
 		var overlapping = $HurtBox.get_overlapping_bodies()
 		for body in overlapping:
@@ -130,21 +133,28 @@ func _on_upgrade_selected(upgrade_data: Dictionary):
 			max_health += 20
 			current_health += 20
 			print("Max health increased to: ", max_health)
-	
-	# Handle spell upgrades through spell manager
-	if upgrade_data.has("spell_name") and spell_manager:
-		var spell = spell_manager.get_spell_by_name(upgrade_data.spell_name)
-		if spell:
-			spell_manager.upgrade_spell(spell, upgrade_data.upgrade_type)
-	
-	# Handle new spell acquisition
-	if upgrade_data.has("new_spell") and spell_manager:
-		var new_spell: SpellBase = upgrade_data.new_spell
-		if new_spell:
-			spell_manager.equip_spell(new_spell.duplicate(true))
+		"spell_level_up":
+			# Handle spell level up
+			if spell_manager and upgrade_data.has("spell_name"):
+				var spell = spell_manager.get_spell_by_name(upgrade_data.spell_name)
+				if spell:
+					var target_level = upgrade_data.get("target_level", spell.current_level + 1)
+					spell_manager.level_up_spell(spell, target_level)
+		"new_spell":
+			# Handle new spell acquisition
+			if spell_manager and upgrade_data.has("new_spell"):
+				var new_spell: SpellBase = upgrade_data.new_spell
+				if new_spell:
+					spell_manager.equip_spell(new_spell.duplicate(true))
 	
 	await get_tree().create_timer(0.1).timeout
 	if collected_experience > 0:
 		var temp_exp = collected_experience
 		collected_experience = 0
 		calculate_experience(temp_exp)
+
+func _on_spell_unlocked(spell: SpellBase):
+	print("🎉 Unlocked new spell: ", spell.spell_name, "!")
+
+func _on_spell_upgraded(spell: SpellBase):
+	print("⭐ ", spell.spell_name, " upgraded to level ", spell.current_level, "!")

@@ -2,6 +2,7 @@ extends Node
 class_name SpellManager
 
 signal spell_upgraded(spell: SpellBase)
+signal spell_unlocked(spell: SpellBase)
 
 @export var owner_node: CharacterBody2D
 @export var starting_spells: Array[SpellBase] = []
@@ -37,7 +38,8 @@ func equip_spell(spell: SpellBase) -> int:
 		"timer": 0.0  # Fire immediately on equip
 	}
 	
-	print("Equipped spell: ", spell.spell_name)
+	print("Equipped spell: ", spell.spell_name, " (Level ", spell.current_level, ")")
+	spell_unlocked.emit(spell)
 	return spell_id
 
 func unequip_spell(spell_id: int):
@@ -135,21 +137,40 @@ func find_nearest_enemy() -> Node2D:
 	
 	return nearest
 
-func upgrade_spell(spell: SpellBase, upgrade_type: String):
-	match upgrade_type:
-		"damage":
-			spell.upgrade_damage(1.2)
-		"fire_rate":
-			spell.upgrade_fire_rate(0.85)
-		"count":
-			spell.upgrade_count(1)
-		"speed":
-			spell.upgrade_speed(1.15)
-		"pierce":
-			spell.upgrade_pierce(1)
+func level_up_spell(spell: SpellBase, target_level: int):
+	"""Level up a spell with predefined upgrades per level"""
+	if spell.current_level >= target_level:
+		return  # Already at or above target level
 	
+	var level = target_level
+	
+	match level:
+		2:
+			# Level 2: +20% Damage
+			spell.upgrade_damage(1.2)
+		3:
+			# Level 3: +1 Projectile
+			spell.upgrade_count(1)
+		4:
+			# Level 4: +20% Fire Rate (shoots faster)
+			spell.upgrade_fire_rate(0.8)
+		5:
+			# Level 5: +1 Pierce and +20% Damage
+			spell.upgrade_pierce(1)
+			spell.upgrade_damage(1.2)
+	
+	spell.current_level = level
 	spell_upgraded.emit(spell)
-	print("Upgraded ", spell.spell_name, " - ", upgrade_type, " to level ", spell.current_level)
+	
+	print("Leveled up ", spell.spell_name, " to level ", spell.current_level)
+	print_spell_stats(spell)
+
+func print_spell_stats(spell: SpellBase):
+	"""Debug function to show current spell stats"""
+	print("  - Damage: ", spell.get_damage())
+	print("  - Fire Rate: ", spell.get_fire_rate())
+	print("  - Projectiles: ", spell.get_projectile_count())
+	print("  - Pierce: ", spell.get_pierce())
 
 func get_all_spells() -> Array[SpellBase]:
 	var spells: Array[SpellBase] = []
