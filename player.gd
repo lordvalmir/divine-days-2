@@ -3,13 +3,9 @@ extends CharacterBody2D
 @export var player_move_speed = 300.0
 @export var max_health = 100
 @export var damage_cooldown = 1.0
-@export var fireball_scene: PackedScene
-@export var fire_rate = 0.5
-@export var fireball_count = 1
 
 var current_health = max_health
 var damage_timer = 0.0
-var fire_timer = 0.0
 var last_direction = Vector2.RIGHT
 var experience = 0
 var experience_level = 1
@@ -17,7 +13,8 @@ var collected_experience = 0
 
 @onready var expBar = get_node("%ExperienceBar")
 @onready var ExperienceBarText = get_node("%ExperienceBarText")
-@onready var upgrade_menu = get_node("/root/Game/UpgradeMenu")  # Adjust path as needed
+@onready var upgrade_menu = get_node("/root/Game/UpgradeMenu")
+@onready var spell_manager: SpellManager = $SpellManager
 
 func _ready():
 	add_to_group("Player")
@@ -28,8 +25,12 @@ func _ready():
 	# Connect to upgrade menu if it exists
 	if upgrade_menu:
 		upgrade_menu.upgrade_selected.connect(_on_upgrade_selected)
+	
+	# Setup spell manager
+	if spell_manager:
+		spell_manager.owner_node = self
 
-func _physics_process(_delta):
+func _physics_process(delta):  # ← Changed _delta to delta
 	var horizontal = Input.get_axis("ui_left", "ui_right")
 	var vertical = Input.get_axis("ui_up", "ui_down")
 	var movement = Vector2(horizontal, vertical)
@@ -38,11 +39,13 @@ func _physics_process(_delta):
 		last_direction = movement.normalized()
 		velocity = movement.normalized() * player_move_speed
 	else:
-		velocity = velocity.move_toward(Vector2.ZERO, player_move_speed)
+		# Use delta * deceleration instead of player_move_speed
+		velocity = velocity.move_toward(Vector2.ZERO, player_move_speed * delta * 10)
 	
 	move_and_slide()
 	
-	damage_timer -= _delta
+	# Also fix the damage timer section:
+	damage_timer -= delta  # ← Changed _delta to delta
 	if damage_timer <= 0:
 		var overlapping = $HurtBox.get_overlapping_bodies()
 		for body in overlapping:
@@ -50,21 +53,6 @@ func _physics_process(_delta):
 				take_damage(10)
 				damage_timer = damage_cooldown
 				break
-	
-	fire_timer -= _delta
-	if fire_timer <= 0:
-		shoot_fireballs()
-		fire_timer = fire_rate
-
-func shoot_fireballs():
-	if not fireball_scene:
-		return
-	
-	for i in range(fireball_count):
-		var fireball = fireball_scene.instantiate()
-		fireball.direction = last_direction
-		fireball.position = global_position
-		get_parent().add_child(fireball)
 
 func _on_body_entered(body):
 	if body.is_in_group("enemy"):
@@ -104,7 +92,7 @@ func calculate_experience(gem_exp):
 		
 		# Show upgrade menu and stop processing experience
 		if upgrade_menu:
-			upgrade_menu.show_upgrades()
+			upgrade_menu.show_upgrades(spell_manager)
 			# Store remaining experience to process after upgrade
 			return
 		
@@ -130,21 +118,30 @@ func set_expbar(set_value = 1, set_max_value = 100):
 	expBar.value = set_value
 	expBar.max_value = set_max_value
 
-func _on_upgrade_selected(upgrade_type: String):
+func _on_upgrade_selected(upgrade_data: Dictionary):
+	var upgrade_type = upgrade_data.get("type", "")
+	
+	# Handle player stat upgrades
 	match upgrade_type:
-		"fireball_count":
-			fireball_count += 1
-			print("Fireball count increased to: ", fireball_count)
-		"fire_rate":
-			fire_rate *= 0.8  # 20% faster (lower cooldown)
-			print("Fire rate improved to: ", fire_rate)
 		"movement_speed":
-			player_move_speed *= 1.2  # 20% faster
+			player_move_speed *= 1.2
 			print("Movement speed increased to: ", player_move_speed)
 		"max_health":
 			max_health += 20
-			current_health += 20  # Also heal
+			current_health += 20
 			print("Max health increased to: ", max_health)
+	
+	# Handle spell upgrades through spell manager
+	if upgrade_data.has("spell_name") and spell_manager:
+		var spell = spell_manager.get_spell_by_name(upgrade_data.spell_name)
+		if spell:
+			spell_manager.upgrade_spell(spell, upgrade_data.upgrade_type)
+	
+	# Handle new spell acquisition
+	if upgrade_data.has("new_spell") and spell_manager:
+		var new_spell: SpellBase = upgrade_data.new_spell
+		if new_spell:
+			spell_manager.equip_spell(new_spell.duplicate(true))
 	
 	await get_tree().create_timer(0.1).timeout
 	if collected_experience > 0:

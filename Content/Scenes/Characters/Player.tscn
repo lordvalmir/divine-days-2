@@ -1,8 +1,10 @@
-[gd_scene load_steps=12 format=3 uid="uid://dksm1sb4bmyc7"]
+[gd_scene load_steps=16 format=3 uid="uid://dksm1sb4bmyc7"]
 
 [ext_resource type="Texture2D" uid="uid://bge6q6ymjnt54" path="res://Content/Assets/2.png" id="1_k7bjn"]
 [ext_resource type="Script" uid="uid://ncinrcv44sy5" path="res://player.gd" id="1_o13n2"]
 [ext_resource type="PackedScene" uid="uid://dfe0a8jv12hq7" path="res://Content/Scenes/projectiles/Fireball.tscn" id="2_wke2c"]
+[ext_resource type="Script" uid="uid://dwscmoglar3l0" path="res://Content/Scenes/Characters/spell_manager.gd" id="4_t2d37"]
+[ext_resource type="Script" uid="uid://b0xqwaksayp6t" path="res://Content/Scenes/Characters/spell_base.gd" id="4_xwnr7"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_o13n2"]
 radius = 8.0
@@ -34,11 +36,22 @@ gradient = SubResource("Gradient_xwnr7")
 width = 1150
 height = 32
 
+[sub_resource type="Resource" id="Resource_suynj"]
+script = ExtResource("4_xwnr7")
+spell_name = "Fireball"
+projectile_scene = ExtResource("2_wke2c")
+spread_pattern = 4
+metadata/_custom_type_script = "uid://b0xqwaksayp6t"
+
+[sub_resource type="Resource" id="Resource_xwnr7"]
+script = ExtResource("4_xwnr7")
+projectile_scene = ExtResource("2_wke2c")
+metadata/_custom_type_script = "uid://b0xqwaksayp6t"
+
 [node name="Player" type="CharacterBody2D" groups=["Player"]]
 collision_layer = 2
 motion_mode = 1
 script = ExtResource("1_o13n2")
-fireball_scene = ExtResource("2_wke2c")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 scale = Vector2(0.3515625, 0.3515625)
@@ -99,6 +112,11 @@ theme_override_colors/font_color = Color(0, 0, 0, 1)
 text = "Level: 1"
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="SpellManager" type="Node" parent="." node_paths=PackedStringArray("owner_node")]
+script = ExtResource("4_t2d37")
+owner_node = NodePath("..")
+starting_spells = Array[ExtResource("4_xwnr7")]([SubResource("Resource_suynj"), SubResource("Resource_xwnr7")])
 
 [connection signal="body_entered" from="HurtBox" to="." method="_on_area_2d_body_entered"]
 [connection signal="area_entered" from="GrabArea" to="." method="_on_grab_area_area_entered"]

@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=4 uid="uid://birdyrfudg6pi"]
+[gd_scene load_steps=28 format=4 uid="uid://birdyrfudg6pi"]
 
 [ext_resource type="PackedScene" uid="uid://cu1emc8j0i1u0" path="res://Content/Scenes/Levels/level.tscn" id="1_prppr"]
 [ext_resource type="Texture2D" uid="uid://b8qfk18qiwl8o" path="res://Content/Assets/Ground_rocks.png" id="2_udwqt"]
@@ -12,6 +12,7 @@
 [ext_resource type="PackedScene" uid="uid://b775pysqoa8ph" path="res://Content/Scenes/Characters/Demon.tscn" id="11_tdtgx"]
 [ext_resource type="Script" uid="uid://g3lk7jilpn7x" path="res://Content/Scenes/Levels/area_2d.gd" id="11_xkko6"]
 [ext_resource type="PackedScene" uid="uid://cod3pfsnfpgx6" path="res://Content/Scenes/Upgrades/Upgrades.tscn" id="12_tdtgx"]
+[ext_resource type="Script" uid="uid://dwscmoglar3l0" path="res://Content/Scenes/Characters/spell_manager.gd" id="13_reu3b"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_i03ao"]
 texture = ExtResource("2_udwqt")
@@ -6478,3 +6479,6 @@ shape = SubResource("RectangleShape2D_5cv0s")
 [node name="Loot" type="Node2D" parent="." groups=["loot"]]
 
 [node name="UpgradeMenu" parent="." instance=ExtResource("12_tdtgx")]
+
+[node name="SpellManager" type="Node" parent="."]
+script = ExtResource("13_reu3b")

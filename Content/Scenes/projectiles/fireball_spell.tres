@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="SpellBase" load_steps=2 format=3 uid="uid://btgd0hrk78nve"]
+
+[ext_resource type="Script" uid="uid://b0xqwaksayp6t" path="res://Content/Scenes/Characters/spell_base.gd" id="1_e3oyt"]
+
+[resource]
+script = ExtResource("1_e3oyt")
+base_damage = 20.0
+base_fire_rate = 0.5
+metadata/_custom_type_script = "uid://b0xqwaksayp6t"
