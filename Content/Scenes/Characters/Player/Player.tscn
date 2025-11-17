@@ -4,8 +4,8 @@
 [ext_resource type="Script" uid="uid://ncinrcv44sy5" path="res://Content/Scenes/Characters/Player/player.gd" id="1_o13n2"]
 [ext_resource type="Script" uid="uid://dwscmoglar3l0" path="res://Content/Scenes/Characters/spell_manager.gd" id="4_t2d37"]
 [ext_resource type="Script" uid="uid://b0xqwaksayp6t" path="res://Content/Scenes/Characters/spell_base.gd" id="4_xwnr7"]
-[ext_resource type="AudioStream" uid="uid://bjnt2meaodr4n" path="res://Content/Assets/Strength of the Titans_shortened.mp3" id="6_guegd"]
 [ext_resource type="Resource" uid="uid://btgd0hrk78nve" path="res://Content/Scenes/Attacks/Resources/fireball_spell.tres" id="5_rqroa"]
+[ext_resource type="AudioStream" uid="uid://bjnt2meaodr4n" path="res://Content/Assets/Strength of the Titans_shortened.mp3" id="6_guegd"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_o13n2"]
 radius = 8.0
@@ -111,6 +111,7 @@ starting_spells = Array[ExtResource("4_xwnr7")]([ExtResource("5_rqroa")])
 [node name="Music" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("6_guegd")
 autoplay = true
+parameters/looping = true
 
 [connection signal="body_entered" from="HurtBox" to="." method="_on_area_2d_body_entered"]
 [connection signal="area_entered" from="GrabArea" to="." method="_on_grab_area_area_entered"]
