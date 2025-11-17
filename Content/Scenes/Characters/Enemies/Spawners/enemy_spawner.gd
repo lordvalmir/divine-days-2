@@ -121,37 +121,75 @@ func update_enemy_count():
 					area_enemy_count[spawn_area] += 1
 
 func get_random_position():
-	if player == null:
+	if player == null or current_area == null:
 		return global_position
 	
-	var vpr = get_viewport_rect().size * randf_range(1.1, 1.4)
-	var offset_x = vpr.x / 2
-	var offset_y = vpr.y / 2
+	var max_attempts = 20
+	var attempt = 0
 	
-	var top_left = player.global_position + Vector2(-offset_x, -offset_y)
-	var top_right = player.global_position + Vector2(offset_x, -offset_y)
-	var bottom_left = player.global_position + Vector2(-offset_x, offset_y)
-	var bottom_right = player.global_position + Vector2(offset_x, offset_y)
+	while attempt < max_attempts:
+		var vpr = get_viewport_rect().size * randf_range(1.1, 1.4)
+		var offset_x = vpr.x / 2
+		var offset_y = vpr.y / 2
+		
+		var top_left = player.global_position + Vector2(-offset_x, -offset_y)
+		var top_right = player.global_position + Vector2(offset_x, -offset_y)
+		var bottom_left = player.global_position + Vector2(-offset_x, offset_y)
+		var bottom_right = player.global_position + Vector2(offset_x, offset_y)
+		
+		var pos_side = ["up", "down", "right", "left"].pick_random()
+		var spawn_pos1: Vector2
+		var spawn_pos2: Vector2
+		
+		match pos_side:
+			"up":
+				spawn_pos1 = top_left
+				spawn_pos2 = top_right
+			"down":
+				spawn_pos1 = bottom_left
+				spawn_pos2 = bottom_right
+			"right":
+				spawn_pos1 = top_right
+				spawn_pos2 = bottom_right
+			"left":
+				spawn_pos1 = top_left
+				spawn_pos2 = bottom_left
+		
+		var candidate_pos = Vector2(
+			randf_range(spawn_pos1.x, spawn_pos2.x),
+			randf_range(spawn_pos1.y, spawn_pos2.y)
+		)
+		
+		# Check if position is within the spawn area
+		if is_position_in_area(candidate_pos, current_area):
+			return candidate_pos
+		
+		attempt += 1
 	
-	var pos_side = ["up", "down", "right", "left"].pick_random()
-	var spawn_pos1: Vector2
-	var spawn_pos2: Vector2
+	# Fallback: return player position if no valid position found
+	return player.global_position
+
+func is_position_in_area(pos: Vector2, area: SpawnArea) -> bool:
+	# Get the CollisionShape2D from the Area2D
+	for child in area.get_children():
+		if child is CollisionShape2D:
+			var shape = child.shape
+			var local_pos = pos - area.global_position - child.position
+			
+			if shape is RectangleShape2D:
+				var extents = shape.size / 2
+				return abs(local_pos.x) <= extents.x and abs(local_pos.y) <= extents.y
+			
+			elif shape is CircleShape2D:
+				return local_pos.length() <= shape.radius
+			
+			elif shape is CapsuleShape2D:
+				# Simplified capsule check
+				return local_pos.length() <= shape.radius + shape.height / 2
+			
+			elif shape is ConvexPolygonShape2D or shape is ConcavePolygonShape2D:
+				# For polygon shapes, use a more complex check
+				var points = shape.points if shape is ConvexPolygonShape2D else shape.segments
+				return Geometry2D.is_point_in_polygon(local_pos, points)
 	
-	match pos_side:
-		"up":
-			spawn_pos1 = top_left
-			spawn_pos2 = top_right
-		"down":
-			spawn_pos1 = bottom_left
-			spawn_pos2 = bottom_right
-		"right":
-			spawn_pos1 = top_right
-			spawn_pos2 = bottom_right
-		"left":
-			spawn_pos1 = top_left
-			spawn_pos2 = bottom_left
-	
-	return Vector2(
-		randf_range(spawn_pos1.x, spawn_pos2.x),
-		randf_range(spawn_pos1.y, spawn_pos2.y)
-	)
+	return false

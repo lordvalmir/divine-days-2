@@ -1,17 +1,16 @@
-[gd_resource type="Resource" script_class="SpellBase" load_steps=4 format=3 uid="uid://bpcs5mb56mg8x"]
+[gd_resource type="Resource" script_class="SpellBase" load_steps=4 format=3 uid="uid://btgd0hrk78nve"]
 
 [ext_resource type="PackedScene" uid="uid://dfe0a8jv12hq7" path="res://Content/Scenes/Attacks/Projectile.tscn" id="1_uy0by"]
 [ext_resource type="Script" uid="uid://b0xqwaksayp6t" path="res://Content/Scenes/Characters/spell_base.gd" id="2_0lycv"]
-[ext_resource type="Texture2D" uid="uid://ujd68qn5lb1x" path="res://Content/Assets/fireball.png" id="3_uy0by"]
+[ext_resource type="Texture2D" uid="uid://d2ff3fl8vlli0" path="res://Content/Assets/Fireball 001.png" id="3_6mlxm"]
 
 [resource]
 script = ExtResource("2_0lycv")
-spell_name = "Fireball"
-spell_icon = ExtResource("3_uy0by")
+spell_name = "fireball"
+spell_icon = ExtResource("3_6mlxm")
 projectile_scene = ExtResource("1_uy0by")
+base_damage = 200.0
 base_fire_rate = 0.5
-base_projectile_count = 5
-base_speed = 200.0
-base_lifetime = 1.0
+base_lifetime = 0.5
 spread_pattern = 1
 metadata/_custom_type_script = "uid://b0xqwaksayp6t"
