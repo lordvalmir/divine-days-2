@@ -1,0 +1,111 @@
+[gd_scene load_steps=14 format=3 uid="uid://dksm1sb4bmyc7"]
+
+[ext_resource type="Texture2D" uid="uid://bge6q6ymjnt54" path="res://Content/Assets/2.png" id="1_k7bjn"]
+[ext_resource type="Script" uid="uid://ncinrcv44sy5" path="res://Content/Scenes/Characters/Player/player.gd" id="1_o13n2"]
+[ext_resource type="Script" uid="uid://dwscmoglar3l0" path="res://Content/Scenes/Characters/spell_manager.gd" id="4_t2d37"]
+[ext_resource type="Script" uid="uid://b0xqwaksayp6t" path="res://Content/Scenes/Characters/spell_base.gd" id="4_xwnr7"]
+[ext_resource type="Resource" uid="uid://btgd0hrk78nve" path="res://Content/Scenes/Attacks/fireball_spell.tres" id="5_rqroa"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_o13n2"]
+radius = 8.0
+height = 16.0
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_chdk0"]
+radius = 5.0
+height = 34.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_wke2c"]
+radius = 76.321686
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_t2d37"]
+radius = 7.071068
+
+[sub_resource type="Gradient" id="Gradient_wke2c"]
+offsets = PackedFloat32Array(0, 0.007246377)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_t2d37"]
+gradient = SubResource("Gradient_wke2c")
+width = 1150
+height = 32
+
+[sub_resource type="Gradient" id="Gradient_xwnr7"]
+offsets = PackedFloat32Array(0, 0.007246377)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_suynj"]
+gradient = SubResource("Gradient_xwnr7")
+width = 1150
+height = 32
+
+[node name="Player" type="CharacterBody2D" groups=["Player"]]
+collision_layer = 2
+motion_mode = 1
+script = ExtResource("1_o13n2")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2(0.3515625, 0.3515625)
+texture = ExtResource("1_k7bjn")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 14)
+shape = SubResource("CapsuleShape2D_o13n2")
+
+[node name="HurtBox" type="Area2D" parent="." groups=["Player"]]
+collision_layer = 2
+collision_mask = 4
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HurtBox"]
+shape = SubResource("CapsuleShape2D_chdk0")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+zoom = Vector2(2, 2)
+
+[node name="GrabArea" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 8
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="GrabArea"]
+shape = SubResource("CircleShape2D_wke2c")
+
+[node name="CollectArea" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 8
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CollectArea"]
+shape = SubResource("CircleShape2D_t2d37")
+
+[node name="GUILayer" type="CanvasLayer" parent="."]
+
+[node name="GUI" type="Control" parent="GUILayer"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 640.0
+offset_bottom = 360.0
+
+[node name="ExperienceBar" type="TextureProgressBar" parent="GUILayer/GUI"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_right = 64.0
+offset_bottom = 64.0
+texture_under = SubResource("GradientTexture2D_t2d37")
+texture_progress = SubResource("GradientTexture2D_suynj")
+tint_progress = Color(0.91657215, 0.0006803763, 0.9165659, 1)
+
+[node name="ExperienceBarText" type="Label" parent="GUILayer/GUI/ExperienceBar"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 525.0
+offset_right = 625.0
+offset_bottom = 23.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "Level: 1"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="SpellManager" type="Node" parent="." node_paths=PackedStringArray("owner_node")]
+script = ExtResource("4_t2d37")
+owner_node = NodePath("..")
+starting_spells = Array[ExtResource("4_xwnr7")]([ExtResource("5_rqroa")])
+
+[connection signal="body_entered" from="HurtBox" to="." method="_on_area_2d_body_entered"]
+[connection signal="area_entered" from="GrabArea" to="." method="_on_grab_area_area_entered"]
+[connection signal="area_entered" from="CollectArea" to="." method="_on_collect_area_area_entered"]

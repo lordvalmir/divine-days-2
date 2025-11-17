@@ -42,9 +42,7 @@ func _physics_process(delta):
 		last_direction = movement.normalized()
 		velocity = movement.normalized() * player_move_speed
 	else:
-		# Smooth deceleration
-		var friction = 1000.0
-		velocity = velocity.move_toward(Vector2.ZERO, friction * delta)
+		velocity = Vector2.ZERO  # Stop immediately
 	
 	move_and_slide()
 	
@@ -131,7 +129,7 @@ func _on_upgrade_selected(upgrade_data: Dictionary):
 			print("Movement speed increased to: ", player_move_speed)
 		"max_health":
 			max_health += 20
-			current_health += 20
+			current_health = max_health
 			print("Max health increased to: ", max_health)
 		"spell_level_up":
 			# Handle spell level up

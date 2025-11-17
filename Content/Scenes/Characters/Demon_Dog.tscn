@@ -1,6 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://do8o1kcu1mlqg"]
-
-[ext_resource type="PackedScene" uid="uid://c13efe6mxfeef" path="res://Content/Scenes/Characters/Enemy.tscn" id="1_85lr2"]
-
-[node name="Enemy" instance=ExtResource("1_85lr2")]
-experience = 20

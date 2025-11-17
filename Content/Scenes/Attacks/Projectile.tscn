@@ -1,20 +1,20 @@
 [gd_scene load_steps=4 format=3 uid="uid://dfe0a8jv12hq7"]
 
-[ext_resource type="Script" uid="uid://dm0ergok2dpvf" path="res://Content/Scenes/projectiles/projectile.gd" id="1_cytut"]
-[ext_resource type="Texture2D" uid="uid://d2ff3fl8vlli0" path="res://Content/Assets/Fireball 001.png" id="2_cytut"]
+[ext_resource type="Script" uid="uid://dm0ergok2dpvf" path="res://Content/Scenes/Attacks/projectile.gd" id="1_35rgt"]
+[ext_resource type="Texture2D" uid="uid://d2ff3fl8vlli0" path="res://Content/Assets/Fireball 001.png" id="2_vxcy3"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_xp7ch"]
 
 [node name="Fireball" type="Area2D"]
 collision_layer = 16
 collision_mask = 4
-script = ExtResource("1_cytut")
+script = ExtResource("1_35rgt")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 position = Vector2(-11.000002, 1)
 rotation = -6.284496
 scale = Vector2(-0.5601573, 0.52026314)
-texture = ExtResource("2_cytut")
+texture = ExtResource("2_vxcy3")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_xp7ch")

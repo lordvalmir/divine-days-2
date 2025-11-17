@@ -6,13 +6,13 @@
 [ext_resource type="Texture2D" uid="uid://bb46t26ljmbv6" path="res://Content/Assets/Objects.png" id="4_i03ao"]
 [ext_resource type="Texture2D" uid="uid://dklrntyxar1tr" path="res://Content/Assets/Water_coasts.png" id="5_3hi4v"]
 [ext_resource type="Texture2D" uid="uid://b4k5uplw1y5wu" path="res://Content/Assets/Details.png" id="6_yagno"]
-[ext_resource type="PackedScene" uid="uid://c6v2575gtwkyc" path="res://Content/Scenes/Characters/Enemies/Spawners/enemy_spawner.tscn" id="7_6k687"]
-[ext_resource type="Script" uid="uid://djkxt06q8abav" path="res://Content/Scenes/Characters/Enemies/Spawners/spawn_info.gd" id="8_lqeuj"]
-[ext_resource type="PackedScene" uid="uid://do8o1kcu1mlqg" path="res://Content/Scenes/Characters/Enemies/Types/Demon_Dog.tscn" id="9_lqeuj"]
-[ext_resource type="PackedScene" uid="uid://b775pysqoa8ph" path="res://Content/Scenes/Characters/Enemies/Types/Demon.tscn" id="11_tdtgx"]
-[ext_resource type="Script" uid="uid://g3lk7jilpn7x" path="res://Content/Scenes/Characters/Enemies/Spawners/spawn_area.gd" id="11_xkko6"]
+[ext_resource type="PackedScene" uid="uid://c6v2575gtwkyc" path="res://Content/Scenes/Characters/enemy_spawner.tscn" id="7_6k687"]
+[ext_resource type="Script" uid="uid://djkxt06q8abav" path="res://Scripts/spawn_info.gd" id="8_lqeuj"]
+[ext_resource type="PackedScene" uid="uid://do8o1kcu1mlqg" path="res://Content/Scenes/Characters/Enemies/Demon_Dog.tscn" id="9_lqeuj"]
+[ext_resource type="PackedScene" uid="uid://b775pysqoa8ph" path="res://Content/Scenes/Characters/Enemies/Demon.tscn" id="11_tdtgx"]
+[ext_resource type="Script" uid="uid://g3lk7jilpn7x" path="res://Content/Scenes/Levels/area_2d.gd" id="11_xkko6"]
 [ext_resource type="PackedScene" uid="uid://cod3pfsnfpgx6" path="res://Content/Scenes/Upgrades/Upgrades.tscn" id="12_tdtgx"]
-[ext_resource type="Script" uid="uid://dwscmoglar3l0" path="res://Content/Scenes/Characters/spell_manager.gd" id="13_reu3b"]
+[ext_resource type="Script" uid="uid://dwscmoglar3l0" path="res://Content/Scenes/Characters/attack_manager.gd" id="13_reu3b"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_i03ao"]
 texture = ExtResource("2_udwqt")
@@ -6414,8 +6414,7 @@ sources/1 = SubResource("TileSetAtlasSource_x4oks")
 [sub_resource type="Resource" id="Resource_xkko6"]
 script = ExtResource("8_lqeuj")
 enemy = ExtResource("9_lqeuj")
-enemies_per_wave = 3
-wave_delay = 0
+wave_delay = 3
 metadata/_custom_type_script = "uid://djkxt06q8abav"
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_xkko6"]
@@ -6424,8 +6423,7 @@ size = Vector2(1356, 1688.3438)
 [sub_resource type="Resource" id="Resource_reu3b"]
 script = ExtResource("8_lqeuj")
 enemy = ExtResource("11_tdtgx")
-enemies_per_wave = 3
-wave_delay = 0
+wave_delay = 3
 metadata/_custom_type_script = "uid://djkxt06q8abav"
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_5cv0s"]
@@ -6461,7 +6459,6 @@ wait_time = 5.0
 [node name="Area2D" type="Area2D" parent="."]
 collision_mask = 2
 script = ExtResource("11_xkko6")
-difficulty_level = 2
 spawns = Array[ExtResource("8_lqeuj")]([SubResource("Resource_xkko6")])
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
@@ -6482,6 +6479,7 @@ shape = SubResource("RectangleShape2D_5cv0s")
 [node name="Loot" type="Node2D" parent="." groups=["loot"]]
 
 [node name="UpgradeMenu" parent="." instance=ExtResource("12_tdtgx")]
+available_spell_resources = null
 
 [node name="SpellManager" type="Node" parent="."]
 script = ExtResource("13_reu3b")

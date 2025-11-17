@@ -1,14 +1,13 @@
 extends Node2D
 
-@export var max_enemies: int = 50  # Maximum enemies allowed at once
-
 @onready var player = get_tree().get_first_node_in_group("Player")
 @onready var timer: Timer = $Timer2
 
 var current_area: SpawnArea = null
 var is_spawning = false
 var active_spawns: Array[Spawn_info] = []
-var enemy_count: int = 0
+var area_enemy_count: Dictionary = {}
+var area_time: Dictionary = {}  # Track time spent in each area
 
 func _ready():
 	timer.timeout.connect(_on_timer_timeout)
@@ -20,6 +19,8 @@ func connect_spawn_areas():
 		if area is SpawnArea:
 			area.player_entered_area.connect(_on_player_entered_area)
 			area.player_exited_area.connect(_on_player_exited_area)
+			area_enemy_count[area] = 0
+			area_time[area] = 0
 
 func _on_player_entered_area(area: SpawnArea):
 	current_area = area
@@ -29,43 +30,64 @@ func _on_player_entered_area(area: SpawnArea):
 	active_spawns.clear()
 	for spawn in area.spawns:
 		var spawn_copy = spawn.duplicate()
-		spawn_copy.wave_delay_counter = 0
 		active_spawns.append(spawn_copy)
+	
+	print("Entered ", area.area_name, " (Difficulty: ", area.difficulty_level, ")")
+	print("  Spawned: ", area.total_spawned, "/", area.max_total_spawns, 
+		  " | Alive: ", area_enemy_count[area], "/", area.max_alive_enemies)
 
 func _on_player_exited_area(area: SpawnArea):
 	if current_area == area:
 		current_area = null
 		is_spawning = false
 		active_spawns.clear()
-		clear_enemies()
+		print("Exited ", area.area_name)
 
 func _on_timer_timeout():
 	if not is_spawning or current_area == null:
 		return
+	
+	# Increment area time
+	area_time[current_area] += 1
 	
 	# Update enemy count
 	update_enemy_count()
 	
 	# Check each spawn configuration
 	for spawn_info in active_spawns:
+		# Check if this spawn is active based on time window
+		if not spawn_info.is_active(area_time[current_area]):
+			continue
+		
 		if spawn_info.wave_delay_counter < spawn_info.wave_delay:
 			spawn_info.wave_delay_counter += 1
 		else:
-			# Reset counter and spawn wave
 			spawn_info.wave_delay_counter = 0
 			spawn_wave(spawn_info)
 
 func spawn_wave(spawn_info: Spawn_info):
-	if spawn_info.enemy == null:
+	if spawn_info.enemy == null or current_area == null:
 		return
 	
-	# Don't spawn if at max capacity
-	if enemy_count >= max_enemies:
-		print("Max enemies reached (", max_enemies, "), waiting...")
+	# Check area-specific limits
+	if not current_area.can_spawn():
 		return
 	
-	# Calculate how many we can actually spawn
-	var spawn_amount = min(spawn_info.enemies_per_wave, max_enemies - enemy_count)
+	var current_alive = area_enemy_count.get(current_area, 0)
+	if current_alive >= current_area.max_alive_enemies:
+		return
+	
+	# Calculate spawn amount
+	var remaining_spawns = current_area.max_total_spawns - current_area.total_spawned
+	var remaining_alive_slots = current_area.max_alive_enemies - current_alive
+	var spawn_amount = min(
+		spawn_info.enemies_per_wave,
+		remaining_spawns,
+		remaining_alive_slots
+	)
+	
+	if spawn_amount <= 0:
+		return
 	
 	var enemy_scene = load(str(spawn_info.enemy.resource_path))
 	if enemy_scene == null:
@@ -74,27 +96,29 @@ func spawn_wave(spawn_info: Spawn_info):
 	for i in spawn_amount:
 		var enemy = enemy_scene.instantiate()
 		enemy.global_position = get_random_position()
-		enemy.tree_exited.connect(_on_enemy_died)  # Track when enemies die
+		enemy.set_meta("spawn_area", current_area)
+		enemy.tree_exited.connect(_on_enemy_died.bind(enemy))
 		add_child(enemy)
-	
-	enemy_count += spawn_amount
-	print("Spawned wave: ", spawn_amount, " enemies (Total: ", enemy_count, "/", max_enemies, ")")
+		
+		current_area.increment_spawn_count()
+		area_enemy_count[current_area] += 1
 
-func _on_enemy_died():
-	enemy_count = max(0, enemy_count - 1)
+func _on_enemy_died(enemy: Node):
+	if enemy.has_meta("spawn_area"):
+		var spawn_area = enemy.get_meta("spawn_area")
+		if spawn_area in area_enemy_count:
+			area_enemy_count[spawn_area] = max(0, area_enemy_count[spawn_area] - 1)
 
 func update_enemy_count():
-	# Recount actual enemies in case some were removed
-	enemy_count = 0
+	for area in area_enemy_count.keys():
+		area_enemy_count[area] = 0
+	
 	for child in get_children():
 		if child != timer and child.is_in_group("enemies"):
-			enemy_count += 1
-
-func clear_enemies():
-	for child in get_children():
-		if child != timer and child.is_in_group("enemies"):
-			child.queue_free()
-	enemy_count = 0
+			if child.has_meta("spawn_area"):
+				var spawn_area = child.get_meta("spawn_area")
+				if spawn_area in area_enemy_count:
+					area_enemy_count[spawn_area] += 1
 
 func get_random_position():
 	if player == null:
