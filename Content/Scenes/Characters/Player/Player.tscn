@@ -41,6 +41,7 @@ height = 32
 collision_layer = 2
 motion_mode = 1
 script = ExtResource("1_o13n2")
+player_move_speed = 100.0
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 scale = Vector2(0.3515625, 0.3515625)
