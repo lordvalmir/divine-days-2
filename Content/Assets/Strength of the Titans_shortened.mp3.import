@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://bjnt2meaodr4n"
+path="res://.godot/imported/Strength of the Titans_shortened.mp3-0ec21c120493a76e4c90ebb70d930cce.mp3str"
+
+[deps]
+
+source_file="res://Content/Assets/Strength of the Titans_shortened.mp3"
+dest_files=["res://.godot/imported/Strength of the Titans_shortened.mp3-0ec21c120493a76e4c90ebb70d930cce.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4
